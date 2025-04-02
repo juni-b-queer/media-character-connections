@@ -41,5 +41,9 @@ onMounted(() => {
         :columns="columns"
         dataPath="/api/episodes"
     />
+
+    TODO
+    - Update Columns
+    - Show episodes with sketches and characters
   </div>
 </template>

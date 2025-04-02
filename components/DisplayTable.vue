@@ -33,11 +33,8 @@ const error = ref(null);
 
 const router = useRouter(); // Initialize Vue Router
 
-
-
-
-
 const selectHandler = (row, e) => {
+  if(props.rowPath === undefined) return;
   router.push(`${props.rowPath}/${row.original.id}`); // Navigate to the appropriate season page
 
 }

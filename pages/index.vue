@@ -29,16 +29,19 @@ export default {
       ready: false,
       seasons: [],
       episodes: [],
+      sketches: [],
       writers: [],
       cytoElements: [],
       available: {
         seasons: [],
         episodes: [],
+        sketches: [],
         writers: []
       },
       filters: {
         seasons: [],
         episodes: [],
+        sketches: [],
         writers: []
       }
     };
@@ -66,9 +69,8 @@ export default {
       })
     },
     async getSeasons() {
-      const {data} = await useFetch('/api/seasons')
-      console.log(data)
-      this.seasons = data.value
+      const data = await $fetch('/api/seasons')
+      this.seasons = data
     },
     mapSeasons() {
       this.seasons.forEach(season => {
@@ -79,9 +81,8 @@ export default {
       })
     },
     async getEpisodes() {
-      const {data} = await useFetch('/api/episodes')
-      console.log(data)
-      this.episodes = data.value
+      const data = await $fetch('/api/episodes')
+      this.episodes = data
     },
     mapEpisodes() {
       this.episodes.forEach(episode => {
@@ -102,10 +103,32 @@ export default {
         )
       })
     },
+    async getSketches() {
+      const data = await $fetch('/api/sketches')
+      this.sketches = data
+    },
+    mapSketches() {
+      this.sketches.forEach(sketch => {
+        const nodeId = `sketch${sketch.id}`
+        this.available.sketches.push(nodeId)
+        this.filters.sketches.push(nodeId)
+        this.pushNode(
+            nodeId,
+            `${sketch.name}`,
+            "sketch",
+            {episodeId: `episode${sketch.episodeId}`}
+        )
+        this.pushLink(
+            `${sketch.episodeId}-sk${sketch.id}`,
+            `episode${sketch.episodeId}`,
+            `sketch${sketch.id}`,
+            "episode-sketch"
+        )
+      })
+    },
     async getWriters() {
-      const {data} = await useFetch('/api/writers')
-      console.log(data)
-      this.writers = data.value
+      const data = await $fetch('/api/writers')
+      this.writers = data
 
     },
     mapWriters() {
@@ -143,18 +166,19 @@ export default {
       await this.getSeasons()
       await this.getEpisodes()
       await this.getWriters()
+      await this.getSketches()
     },
     mapAll() {
       this.mapSeasons()
       this.mapEpisodes()
       this.mapWriters()
+      this.mapSketches()
     }
 
   },
   async beforeMount() {
     await this.fetchAll()
     this.mapAll()
-    console.log(this.cytoElements)
     this.ready = true
   }
 };

@@ -9,7 +9,8 @@ export default eventHandler(async (event) => {
                 with: {
                     character: {
                         with: {
-                            actor: true
+                            actor: true,
+                            characterToSketch: true
                         }
                     }
                 }
@@ -17,11 +18,12 @@ export default eventHandler(async (event) => {
         }
     })
 
-    return sketch.characterToSketch.map(c => {
+    return sketch?.characterToSketch.map(c => {
         return {
             id: c.character.id,
             name: c.character.name,
-            actor: c.character.actor.name
+            actor: c.character.actor,
+            characterToSketch: c.character.characterToSketch,
         }
     })
 })

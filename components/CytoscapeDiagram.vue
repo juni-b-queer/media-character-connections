@@ -25,12 +25,8 @@ export default defineComponent({
       if (this.cy) {
         this.cy.destroy(); // Destroy the previous instance
       }
-
-
       // Apply filters to elements
       const filteredElements = this.filterElements(this.elements, this.filters); // Filtered elements
-
-      console.log(filteredElements.length)
       cytoscape.use( dagre );
 
       this.cy = cytoscape({
@@ -49,7 +45,7 @@ export default defineComponent({
               "text-outline-width": 2,
               "text-outline-color": "black",
               "font-size": "12px",
-              "width": "fit-content",
+              "width": "70px",
             },
           },
           {
@@ -81,6 +77,20 @@ export default defineComponent({
             },
           },
           {
+            selector: 'node[type="sketch"]',
+            style: {
+              "background-color": "#ef9fc6",
+              shape: "pentagon",
+              label: "data(label)",
+              "text-halign": "center",
+              "text-valign": "center",
+              "color": "#fff",
+              "text-outline-width": 2,
+              "text-outline-color": "black",
+              "font-size": "12px",
+            },
+          },
+          {
             selector: "edge",
             style: {
               width: 3,
@@ -88,53 +98,36 @@ export default defineComponent({
               "target-arrow-shape": "triangle",
             },
           },
+          {
+            selector: "edge[type='season-episode']",
+            style: {
+              width: 3,
+              "line-color": "#ff0000",
+              "target-arrow-shape": "triangle",
+            },
+          },
+          {
+            selector: "edge[type='episode-sketch']",
+            style: {
+              width: 3,
+              "line-color": "#78dedc",
+              "target-arrow-shape": "triangle",
+            },
+          }
+          ,
+          {
+            selector: "edge[type='episode-writer']",
+            style: {
+              width: 3,
+              "line-color": "#fa09a6",
+              "target-arrow-shape": "triangle",
+            },
+          }
         ],
         layout: { name: "dagre"},
       });
-
-      console.log("after update");
     },
-    // filterElements(elements, filters) {
-    //   let visibleNodes = [];
-    //   let visibleNodeIds = new Set();
-    //   let visibleEdges = [];
-    //
-    //   elements.forEach(({ data }) => {
-    //     if(data.target) return;
-    //
-    //     if (data.type === "season" && !filters.seasons.includes(data.id))
-    //       return;
-    //
-    //     if (data.type === "episode" && !filters.episodes.includes(data.id))
-    //       return;
-    //
-    //     if (data.type === "writer" && !filters.writers.includes(data.id))
-    //       return;
-    //
-    //     if (data.type === "character" && !filters.characters.includes(data.id))
-    //       return;
-    //
-    //     // console.log(`Adding ${data.id} to visible nodes`)
-    //     visibleNodes.push({data: data});
-    //     visibleNodeIds.add(data.id);
-    //   });
-    //
-    //   elements.forEach(({ data }) => {
-    //     if (
-    //         data.source &&
-    //         data.target &&
-    //         visibleNodeIds.has(data.source) &&
-    //         visibleNodeIds.has(data.target)
-    //     ) {
-    //       visibleEdges.push({data: data});
-    //     }
-    //   });
-    //
-    //   return [
-    //     ...visibleNodes,
-    //     ...visibleEdges,
-    //   ];
-    // },
+
     filterElements(elements, filters) {
       let visibleNodes = [];
       let visibleNodeIds = new Set();
@@ -142,6 +135,8 @@ export default defineComponent({
 
       let removedSeasons = new Set();
       let removedEpisodes = new Set();
+      let removedSketches = new Set();
+
 
       // Step 1: Identify seasons to remove
       elements.forEach(({ data }) => {
@@ -157,6 +152,12 @@ export default defineComponent({
         }
       });
 
+      elements.forEach(({ data }) => {
+        if (data.type === "sketch" && removedEpisodes.has(data.episodeId)) {
+          removedSketches.add(data.id);
+        }
+      });
+
       // Step 3: Identify and keep only connected nodes
       elements.forEach(({ data }) => {
         if (data.target) return; // Ignore edges for now
@@ -166,6 +167,7 @@ export default defineComponent({
 
         // Remove nodes that are not in the filter list
         if (data.type === "season" && removedSeasons.has(data.id)) return;
+        if (data.type === "sketch" && removedSketches.has(data.id)) return;
         if (data.type === "writer" && !filters.writers.includes(data.id)) return;
         if (data.type === "character" && !filters.characters.includes(data.id)) return;
 

@@ -18,11 +18,29 @@ export const sketchesColumns = [
   }
 ]
 
-export const writersColumns = [
+export const writerColumns = [
   {
     accessorKey: 'name',
     header: 'Name',
     cell: (row) => row.getValue('name'),
+  },
+  {
+    accessorKey: 'avatarUrl',
+    header: 'Picture',
+    cell: (row) => row.getValue('avatarUrl') ?? '',
+  }
+]
+
+export const actorColumns = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    cell: (row) => row.getValue('name'),
+  },
+  {
+    accessorKey: 'avatarUrl',
+    header: 'Picture',
+    cell: (row) => row.getValue('avatarUrl') ?? '',
   }
 ]
 
@@ -37,8 +55,20 @@ export const characterColumns = [
   {
     accessorKey: 'actor',
     header: 'Actor',
-    cell: (row) => row.getValue('actor'),
-  }
+    cell: (row) => row.getValue('actor').name,
+  },
+  {
+    accessorKey: 'avatarUrl',
+    header: 'Picture',
+    cell: (row) => row.getValue('avatarUrl') ?? '',
+  },
+  {
+    accessorKey: 'characterToSketch',
+    header: 'Sketches',
+    cell: (row) => {
+      return row.getValue('characterToSketch').length ?? ''
+    },
+  },
 ]
 
 </script>

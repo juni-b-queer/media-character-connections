@@ -6,6 +6,10 @@
         <li><NuxtLink to="/">Home</NuxtLink></li>
         <li><NuxtLink to="/seasons">Seasons</NuxtLink></li>
         <li><NuxtLink to="/episodes">Episodes</NuxtLink></li>
+        <li><NuxtLink to="/sketches">Sketches</NuxtLink></li>
+        <li><NuxtLink to="/characters">Characters</NuxtLink></li>
+        <li><NuxtLink to="/actors">Actors</NuxtLink></li>
+        <li><NuxtLink to="/writers">Writers</NuxtLink></li>
 
       </ul>
     </nav>

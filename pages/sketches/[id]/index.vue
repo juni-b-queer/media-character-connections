@@ -2,7 +2,7 @@
 import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
 import {useRoute} from "#vue-router";
-import {characterColumns, sketchesColumns, writersColumns} from "~/components/columns.vue"; // Import Vue Router
+import {characterColumns} from "~/components/columns.vue"; // Import Vue Router
 import * as z from 'zod'
 
 const router = useRouter(); // Initialize Vue Router
@@ -122,36 +122,13 @@ onMounted(async () => {
       </UModal>
     </div>
     <DisplayTable
-        rowPath="/characters"
         :columns="characterColumns"
-        :dataPath="`/api/sketches/${sketchId}/characters`"
+        rowPath="/characters"
+        :data-path="`/api/sketches/${sketchId}/characters`"
         ref="charactersTableRef"
     />
-    <!-- Updated UTable usage -->
-<!--    <div class="table-header flex items-center justify-between" >-->
-<!--      <h1 class="text-xl font-bold"> Writers </h1>-->
-<!--      <UModal title="Add Writer" v-model:open="addWriterOpen">-->
-<!--        <UButton>-->
-<!--          <UIcon name="i-lucide-badge-plus" size="1.5rem" class="cursor-pointer"/>-->
-<!--        </UButton>-->
-<!--        <template #body>-->
-<!--          <UForm v-if="newWriter" :schema="newWriterSchema" :state="newWriterState" class="space-y-4">-->
-<!--            <UFormField label="Name" name="name">-->
-<!--              <UInput v-model="newWriterState.name"/>-->
-<!--            </UFormField>-->
-
-<!--            <UButton @click="onNewWriterSubmit">-->
-<!--              Create and Add-->
-<!--            </UButton>-->
-<!--          </UForm>-->
-<!--        </template>-->
-<!--      </UModal>-->
-<!--    </div>-->
-<!--    <DisplayTable-->
-<!--        rowPath="/writers"-->
-<!--        :columns="writersColumns"-->
-<!--        :dataPath="`/api/episodes/${episodeId}/writers`"-->
-<!--        ref="writersTableRef"-->
-<!--    />-->
+    TODO
+    - Use AddEntityModal
+    - Edit sketch
   </div>
 </template>

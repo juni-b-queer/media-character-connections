@@ -32,18 +32,29 @@ export const sketch = pgTable('sketches_table', {
 
 export const writer = pgTable('writers_table', {
     id: serial('id').primaryKey(),
-    name: varchar({ length: 255 }).unique(),
+    name: varchar({ length: 255 }).notNull().unique(),
+    avatarUrl: varchar({ length: 255 }),
 })
 
 export const actor = pgTable('actors_table', {
     id: serial('id').primaryKey(),
-    name: varchar({ length: 255 }).unique(),
+    name: varchar({ length: 255 }).notNull().unique(),
+    avatarUrl: varchar({ length: 255 }),
 })
 
 export const character = pgTable('characters_table', {
     id: serial('id').primaryKey(),
-    name: varchar({ length: 255 }).unique(),
+    name: varchar({ length: 255 }).notNull().unique(),
     actorId: integer().notNull().references(() => actor.id),
+    avatarUrl: varchar({ length: 255 }),
+})
+
+export const characterConnection = pgTable('character_connections_table', {
+    id: serial('id').primaryKey(),
+    connectionType: varchar({ length: 255 }).notNull(),
+    targetCharacterId: integer().notNull().references(() => character.id),
+    sourceCharacterId: integer().notNull().references(() => character.id),
+    sketchId: integer().notNull().references(() => sketch.id),
 })
 
 
@@ -88,6 +99,7 @@ export const sketchRelations = relations(sketch, ({ one, many }) => ({
         references: [episode.id],
     }),
     characterToSketch: many(characterToSketch),
+    characterConnection: many(characterConnection),
 }))
 
 export const characterRelations = relations(character, ({ one, many }) => ({
@@ -96,10 +108,30 @@ export const characterRelations = relations(character, ({ one, many }) => ({
         references: [actor.id],
     }),
     characterToSketch: many(characterToSketch),
+    toConnection: many(characterConnection),
+    fromConnection: many(characterConnection),
+
 }))
 
 export const actorRelations = relations(actor, ({ many }) => ({
     characters: many(character),
+}))
+
+export const characterConnectionRelations = relations(characterConnection, ({ one }) => ({
+    target: one(character, {
+        fields: [characterConnection.targetCharacterId],
+        references: [character.id],
+        relationName: "toConnection"
+    }),
+    source: one(character, {
+        fields: [characterConnection.sourceCharacterId],
+        references: [character.id],
+        relationName: "fromConnection"
+    }),
+    sketch: one(sketch, {
+        fields: [characterConnection.sketchId],
+        references: [sketch.id],
+    }),
 }))
 
 // Many to Many relations

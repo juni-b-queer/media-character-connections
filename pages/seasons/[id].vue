@@ -58,5 +58,7 @@ onMounted(() => {
           rowPath="/episodes"
           :dataPath="`/api/seasons/${seasonId}/episodes`"
       />
+    TODO
+    - Show season specific graph
   </div>
 </template>
