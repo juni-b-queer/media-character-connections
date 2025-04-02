@@ -19,6 +19,8 @@
     "@nuxt/scripts": "0.11.5",
     "@nuxt/ui": "^3.0.2",
     "@unhead/vue": "^2.0.0-rc.8",
+    "cytoscape": "^3.31.2",
+    "cytoscape-dagre": "^2.5.0",
     "drizzle-kit": "^0.30.6",
     "drizzle-orm": "^0.41.0",
     "eslint": "^9.0.0",

@@ -24,6 +24,7 @@ export const episode = pgTable('episodes_table', {
 
 export const sketch = pgTable('sketches_table', {
     id: serial('id').primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
     episodeId: integer().notNull().references(() => episode.id),
     sketchNumberInEpisode: integer().notNull(),
     runtime: integer().notNull()

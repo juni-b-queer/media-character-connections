@@ -32,7 +32,8 @@ type SketchSchema = z.output<typeof sketchSchema>
 const sketchState = reactive<Partial<SketchSchema>>({
   episodeId: episodeId,
   runtime: undefined,
-  sketchNumberInEpisode: undefined
+  sketchNumberInEpisode: undefined,
+  name: undefined,
 
 })
 
@@ -43,13 +44,15 @@ async function onSketchSubmit(event) {
         body: {
           episodeId: sketchState.episodeId,
           sketchNumberInEpisode: sketchState.sketchNumberInEpisode,
-          runtime: sketchState.runtime
+          runtime: sketchState.runtime,
+          name: sketchState.name
         }
       })
 
   addSketchOpen.value = false
   sketchState.runtime = undefined
   sketchState.sketchNumberInEpisode = undefined
+  sketchState.name = undefined
 
   if (sketchesTableRef.value) {
     await sketchesTableRef.value.fetchData();
@@ -108,6 +111,9 @@ async function onNewWriterSubmit(event) {
         </UButton>
         <template #body>
           <UForm :schema="sketchSchema" :state="sketchState" class="space-y-4">
+            <UFormField label="Sketch name" name="name">
+              <UInput v-model="sketchState.name"/>
+            </UFormField>
             <UFormField label="Runtime (seconds)" name="runtime">
               <UInput v-model="sketchState.runtime" type="number"/>
             </UFormField>

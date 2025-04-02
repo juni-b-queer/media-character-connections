@@ -2,11 +2,9 @@
 
 export const sketchesColumns = [
   {
-    accessorKey: 'episode',
-    header: 'Episode in season',
-    cell: (row) => {
-      return `S${row.row.original.episode.seasonId}E${row.row.original.episode.episodeNumberInSeason}`
-    },
+    accessorKey: 'name',
+    header: 'Name',
+    cell: (row) =>  row.getValue('name'),
   },
   {
     accessorKey: 'sketchNumberInEpisode',
@@ -25,6 +23,21 @@ export const writersColumns = [
     accessorKey: 'name',
     header: 'Name',
     cell: (row) => row.getValue('name'),
+  }
+]
+
+export const characterColumns = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    cell: (row) => {
+      return `${row.getValue('name')}`
+    },
+  },
+  {
+    accessorKey: 'actor',
+    header: 'Actor',
+    cell: (row) => row.getValue('actor'),
   }
 ]
 
