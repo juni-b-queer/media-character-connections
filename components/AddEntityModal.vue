@@ -52,12 +52,13 @@ if (externalApiConfig.value) {
     $fetch(apiEndpoint)
         .then((data) => {
           dynamicOptions[fieldName] = data.map((item: any) => ({
-            label: item.name,
+            label: item.name ?? item.title,
             value: item.id,
           }));
           fetchStatuses[fieldName] = "success";
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e)
           fetchStatuses[fieldName] = "error";
         });
   }
@@ -98,7 +99,10 @@ async function onFormSubmit() {
                   :loading="fetchStatuses[key] === 'pending'"
                   v-model="formState[key]"
                   placeholder="Select an option"
-              />
+                  class="max-w-xs w-full"
+              >
+
+              </USelect>
             </template>
             <template v-else-if="typeof props.defaultState[key] === 'string'">
               <UInput v-model="formState[key]" />
@@ -116,3 +120,7 @@ async function onFormSubmit() {
     </template>
   </UModal>
 </template>
+
+<style scoped>
+
+</style>

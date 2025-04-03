@@ -108,8 +108,8 @@ export const characterRelations = relations(character, ({ one, many }) => ({
         references: [actor.id],
     }),
     characterToSketch: many(characterToSketch),
-    toConnection: many(characterConnection),
-    fromConnection: many(characterConnection),
+    toConnection: many(characterConnection, {relationName: "toConnection"}),
+    fromConnection: many(characterConnection, {relationName: "fromConnection"}),
 
 }))
 

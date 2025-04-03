@@ -5,7 +5,7 @@ import type {TableColumn} from "#ui/components/Table.vue"; // Import Vue Router
 
 // State for props and data
 const props = defineProps({
-  data: {
+  rowData: {
     type: Array
   },
   columns: {
@@ -26,7 +26,7 @@ const props = defineProps({
   }
 })
 
-const data = ref(props.data);
+const data = ref(props.rowData);
 const columns = ref(props.columns);
 const loading = ref(true);
 const error = ref(null);
@@ -56,21 +56,28 @@ onMounted(() => {
   if(props.dataPath){
     fetchData();
   }
-
 })
 
+function updateData() {
+  data.value = props.rowData;
+}
+
+watch(
+    () => props.rowData,
+    () => updateData(),
+    { deep: true }
+);
+
+
+
+
 defineExpose({
-  fetchData
+  fetchData,
+  updateData
 });
 </script>
 <template>
   <div>
-<!--    <div class="table-header flex items-center justify-between" >-->
-<!--      <h1 class="text-xl font-bold"> {{header}} </h1>-->
-<!--      <button v-if="canAdd" @click="addHandler">-->
-<!--        <UIcon name="i-lucide-badge-plus" size="1.5rem" class="cursor-pointer" />-->
-<!--      </button>-->
-<!--    </div>-->
     <UCard>
       <UTable
           :data="data"

@@ -29,11 +29,12 @@ onMounted(() => {
 </script>
 
 <template>
+<div>
 
-  <div>
-    <div class="table-header flex items-center justify-between" >
-      <h1 class="text-xl font-bold"> Episodes </h1>
-    </div>
+
+  <div class="table-header flex items-center justify-between">
+    <h1 class="text-xl font-bold"> Episodes </h1>
+  </div>
     <!-- Updated UTable usage -->
     <DisplayTable
         header="Episodes"
@@ -45,5 +46,6 @@ onMounted(() => {
     TODO
     - Update Columns
     - Show episodes with sketches and characters
-  </div>
+
+</div>
 </template>

@@ -33,6 +33,7 @@ async function onCharacterUpdatedAdded(data) {
     <DisplayTable
         header="Characters"
         :columns="columns"
+        row-path="/characters"
         data-path="/api/characters"
         ref="charactersTableRef"
     />

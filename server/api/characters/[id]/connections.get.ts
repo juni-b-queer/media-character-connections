@@ -1,13 +1,12 @@
 import {tables, useDrizzle} from "~/server/utils/drizzle";
 
 export default eventHandler(async (event) => {
-    console.log(getRouterParams(event))
     const { id } = getRouterParams(event)
 
-    const connections = await useDrizzle().query.characterConnections.findMany({
+    const connections = await useDrizzle().query.characterConnection.findMany({
         where: or(
-            eq(tables.characterToSketch.characterId, id),
-            eq(tables.characterToSketch.sketchId, id)
+            eq(tables.characterConnection.sourceCharacterId, id),
+            eq(tables.characterConnection.targetCharacterId, id)
         ),
         with: {
             sketch: true,

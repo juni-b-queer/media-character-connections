@@ -10,7 +10,27 @@ export default eventHandler(async (event) => {
                     character: {
                         with: {
                             actor: true,
-                            characterToSketch: true
+                            characterToSketch: true,
+                            toConnection: {
+                                with: {
+                                    sketch: true,
+                                    source: {
+                                        with: {
+                                            actor: true,
+                                        }
+                                    }
+                                }
+                            },
+                            fromConnection: {
+                                with: {
+                                    sketch: true,
+                                    target: {
+                                        with: {
+                                            actor: true,
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -24,6 +44,8 @@ export default eventHandler(async (event) => {
             name: c.character.name,
             actor: c.character.actor,
             characterToSketch: c.character.characterToSketch,
+            toConnection: c.character.toConnection,
+            fromConnection: c.character.fromConnection,
         }
     })
 })

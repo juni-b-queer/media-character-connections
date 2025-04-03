@@ -22,6 +22,15 @@ export const characterSchema = z.object({
 
 export type CharacterSchema = z.output<typeof characterSchema>
 
+export const characterConnectionSchema = z.object({
+    connectionType: z.string(),
+    sketchId: z.number(),
+    targetCharacterId: z.number(),
+    sourceCharacterId: z.number()
+})
+
+export type CharacterConnectionSchema = z.output<typeof characterConnectionSchema>
+
 
 export const sketchSchema = z.object({
     episodeId: z.number(),

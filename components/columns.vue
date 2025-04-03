@@ -71,4 +71,32 @@ export const characterColumns = [
   },
 ]
 
+export const characterConnectionColumns = [
+
+  {
+    accessorKey: 'source',
+    header: 'Source',
+    cell: (row) => row.getValue('source').name,
+  },
+  {
+    accessorKey: 'connectionType',
+    header: 'Type',
+    cell: (row) => {
+      return `${row.getValue('connectionType')}`
+    },
+  },
+  {
+    accessorKey: 'target',
+    header: 'Target',
+    cell: (row) => row.getValue('target').name,
+  },
+  {
+    accessorKey: 'sketch',
+    header: 'Sketch',
+    cell: (row) => {
+      return row.getValue('sketch').name
+    },
+  },
+]
+
 </script>
