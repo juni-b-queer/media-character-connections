@@ -43,6 +43,7 @@ export default eventHandler(async (event) => {
             id: c.character.id,
             name: c.character.name,
             actor: c.character.actor,
+            actorId: c.character.actorId,
             characterToSketch: c.character.characterToSketch,
             toConnection: c.character.toConnection,
             fromConnection: c.character.fromConnection,

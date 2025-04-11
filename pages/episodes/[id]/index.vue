@@ -2,8 +2,9 @@
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {useRoute} from "#vue-router";
-import {sketchesColumns, writerColumns} from "~/components/columns.vue"; // Import Vue Router
+import {sketchesColumns, writerColumns} from "../../../components/columns.vue"; // Import Vue Router
 import {sketchSchema, writerSchema} from "~/components/schema";
+import NotesTable from "~/components/Tables/NotesTable.vue";
 
 const router = useRouter(); // Initialize Vue Router
 
@@ -44,13 +45,14 @@ async function onWriterUpdatedAdded(data) {
 <template>
 
   <div>
+      <h1 class="text-3xl font-bold pb-3"> Episode {{episodeId}}</h1>
     <div class="table-header flex items-center justify-between">
       <h1 class="text-xl font-bold"> Sketches </h1>
       <AddEntityModal
           title="Add Sketch"
           post-url="/api/sketches"
           :schema="sketchSchema"
-          :default-state="{ episodeId: parseInt(episodeId), name: '', runtime: 0, sketchNumberInEpisode: 0 }"
+          :default-state="{ episodeId: parseInt(episodeId), name: '', runtime: 0, sketchNumberInEpisode: 0, location: '' }"
           @submitted="onSketchAdded"
       />
 
@@ -81,6 +83,8 @@ async function onWriterUpdatedAdded(data) {
             :dataPath="`/api/episodes/${episodeId}/writers`"
             ref="writersTableRef"
         />
+
+    <NotesTable :notable-id="parseInt(episodeId)" :notable-type="'episode'" />
     TODO
     - Edit Episode
     - Writer autocomplete in form

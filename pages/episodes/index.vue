@@ -31,11 +31,9 @@ onMounted(() => {
 <template>
 <div>
 
+  <h1 class="text-3xl font-bold pb-3"> Episodes </h1>
 
-  <div class="table-header flex items-center justify-between">
-    <h1 class="text-xl font-bold"> Episodes </h1>
-  </div>
-    <!-- Updated UTable usage -->
+  <!-- Updated UTable usage -->
     <DisplayTable
         header="Episodes"
         rowPath="/episodes"

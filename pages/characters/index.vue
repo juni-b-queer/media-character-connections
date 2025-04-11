@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {characterColumns} from "~/components/columns.vue";
+import {characterColumns} from "../../components/columns.vue";
 import * as z from "zod";
 import {ref} from "vue";
 import {characterSchema} from "~/components/schema";
@@ -18,12 +18,12 @@ async function onCharacterUpdatedAdded(data) {
 <template>
   <div>
     <div class="table-header flex items-center justify-between">
-      <h1 class="text-xl font-bold"> Characters </h1>
+      <h1 class="text-3xl font-bold"> Characters </h1>
       <AddEntityModal
           title="Add Character"
           post-url="/api/characters"
           :schema="characterSchema"
-          :default-state="{ name: '', avatarUrl: '', actorId: 0 }"
+          :default-state="{ name: '', avatarUrl: '', actorId: 0, creditedName: '' }"
           :additional-fields-api="{ actorId: '/api/actors' }"
           @submitted="onCharacterUpdatedAdded"
       />

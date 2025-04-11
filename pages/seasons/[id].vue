@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import NotesTable from "~/components/Tables/NotesTable.vue";
 
 // Initialize route to get the season ID from the URL
 const route = useRoute();
@@ -52,12 +53,21 @@ onMounted(() => {
 
 <template>
   <div>
+
+    <h1 class="text-3xl font-bold pb-3"> Season {{seasonId}}</h1>
+
+
+    <div class="table-header flex items-center justify-between">
+      <h1 class="text-xl font-bold"> Episodes In Season {{ seasonId }}</h1>
+    </div>
       <DisplayTable
           :header="`Episodes In Season ${seasonId}`"
           :columns="columns"
           rowPath="/episodes"
           :dataPath="`/api/seasons/${seasonId}/episodes`"
       />
+
+    <NotesTable :notable-id="parseInt(seasonId)" :notable-type="'season'" />
     TODO
     - Show season specific graph
   </div>

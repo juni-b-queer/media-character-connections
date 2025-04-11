@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {writerColumns} from "~/components/columns.vue";
+import {writerColumns} from "../../components/columns.vue";
 import {writerSchema} from "~/components/schema";
 
 const columns = writerColumns;
@@ -15,7 +15,7 @@ async function onWriterUpdatedAdded(data) {
 <template>
   <div>
     <div class="table-header flex items-center justify-between">
-      <h1 class="text-xl font-bold"> Writers </h1>
+      <h1 class="text-3xl font-bold"> Writers </h1>
       <AddEntityModal
           title="Add Writer"
           post-url="/api/writers"

@@ -3,9 +3,10 @@ import { defineComponent } from "vue";
 import cytoscape from "cytoscape";
 import dagre from 'cytoscape-dagre';
 import {basicStyles} from "~/components/diagramStandards.js";
+import {filterBrokenEdges, positionNodes} from "~/components/networkDiagrams/nodePositioning.js";
 
 export default defineComponent({
-  name: "StandardDiagram",
+  name: "CustomDiagram",
   props: {
     nodes: {
       type: Array,
@@ -59,6 +60,9 @@ export default defineComponent({
       document.body.removeChild(link);
     },
     updateGraph() {
+      // const filteredEdges = filterBrokenEdges(this.nodes, this.edges)
+      //
+      // const positionedNodes = positionNodes(this.nodes, filteredEdges)
       const elements = [
         ...this.nodes,
         ...this.edges
@@ -92,7 +96,7 @@ export default defineComponent({
         container: this.$refs.cy,
         elements: elements,
         style: basicStyles,
-        layout: { name: "dagre", nodeDimensionsIncludeLabels: true,  sort: (a, b) => a.data("rank") - b.data("rank"), nodeSep: 100},
+        layout: { name: "preset", nodeDimensionsIncludeLabels: true,  sort: (a, b) => a.data("rank") - b.data("rank"), nodeSep: 100},
       });
       // this.cy.fit(undefined, 100);
     },

@@ -1,59 +1,102 @@
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // Import Vue Router
+<script lang="ts">
+import {defineComponent} from 'vue'
+import {seasonsColumns} from "~/components/columns.vue";
+import {
+  mapEpisodeNodesAndEdges,
+  mapSeasonsNodes,
+  mapWriterNodesAndEdges
+} from "~/components/networkDiagrams/nodeAndEdgeMappingFunctions";
 
-// State for seasons
-const seasons = ref([]);
-const loading = ref(true);
-const error = ref(null);
-
-const router = useRouter(); // Initialize Vue Router
-
-// Navigate when a row is clicked
-const goToSeason = (row) => {
-  console.log(row.getValue('id'))
-  router.push(`/seasons/${row.getValue('id')}`); // Navigate to the appropriate season page
-};
-
-// Fetch seasons from the API
-// const fetchSeasons = async () => {
-//   try {
-//     const response = await $fetch('/api/seasons');
-//
-//     console.log(response)
-//     seasons.value = response; // Assign the fetched data
-//   } catch (err) {
-//     error.value = err.message || 'Failed to load seasons';
-//   } finally {
-//     loading.value = false;
-//   }
-// };
-
-const columns = [
-  {
-    accessorKey: 'id',
-    header: 'Season #',
+export default defineComponent({
+  name: "temp",
+  computed: {
+    seasonsColumns() {
+      return seasonsColumns
+    }
   },
-  {
-    accessorKey: 'releaseYear',
-    header: 'Release Year',
-  }
-]
+  data() {
+    return {
+      ready: false,
+      nodes: [],
+      edges: [],
+      seasons: [],
+      episodes: [],
+      writers: [],
+      filters: {
+        showWriters: true,
+      },
+      checkboxes: [
+        {
+          key: 'showWriters', default: true, label: "Show Episode Writers", value: true
+        },
+      ]
+    };
+  },
 
-onMounted(() => {
-  // fetchSeasons(); // Fetch data once the component is mounted
-});
+  methods: {
+    async fetchAll() {
+      const data = await $fetch('/api/nodes')
+      this.seasons = data.seasons
+      this.episodes = data.episodes
+      this.writers = data.writers
+
+    },
+
+    mapAll(){
+      this.nodes = []
+      this.edges = []
+      const newSeasonElements = mapSeasonsNodes(this.seasons);
+      this.pushUnique(newSeasonElements.nodes, newSeasonElements.edges)
+      const newEpisodeElements = mapEpisodeNodesAndEdges(this.episodes);
+      this.pushUnique(newEpisodeElements.nodes, newEpisodeElements.edges)
+
+      if(this.filters.showWriters){
+        const newWriterElements = mapWriterNodesAndEdges(this.writers);
+        this.pushUnique(newWriterElements.nodes, newWriterElements.edges)
+
+      }
+
+    },
+    pushUnique(newNodes, newEdges){
+      this.nodes = this.nodes.concat(newNodes)
+      this.edges = this.edges.concat(newEdges)
+    },
+    onCheckboxUpdate(key) {
+      this.filters[key] = !this.filters[key];
+      const checkbox = this.checkboxes.find(cb => cb.key === key);
+      if (checkbox) {
+        this.checkbox = this.filters[key];
+      }
+      this.mapAll()
+    }
+  },
+  async beforeMount() {
+    await this.fetchAll()
+    // await this.getSeasons()
+    this.mapAll()
+    // this.ready = true
+  }
+})
 </script>
 
 <template>
 
-    <div>
-      <!-- Updated UTable usage -->
-      <DisplayTable
-          header="Seasons"
-          :columns="columns"
-          rowPath="/seasons"
-          dataPath="/api/seasons"
-      />
-    </div>
+  <div>
+    <h1 class="text-3xl font-bold pb-3"> Seasons </h1>
+
+    <!-- Updated UTable usage -->
+    <DisplayTable
+        header="Seasons"
+        :columns="seasonsColumns"
+        rowPath="/seasons"
+        dataPath="/api/seasons"
+    />
+
+    <StandardDiagram :nodes="nodes" :edges="edges" @updateCheckbox="onCheckboxUpdate" :checkboxes="checkboxes"/>
+
+  </div>
 </template>
+
+<style scoped>
+
+</style>

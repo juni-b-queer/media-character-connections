@@ -8,7 +8,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  postUrl: {
+  patchUrl: {
     type: String,
     required: true,
   },
@@ -16,7 +16,7 @@ const props = defineProps({
     type: Object,
     required: true, // Expecting a Zod schema object
   },
-  defaultState: {
+  currentState: {
     type: Object,
     required: true, // Expecting an object for the default blank state
   },
@@ -85,7 +85,7 @@ async function onFormSubmit() {
 <template>
   <UModal :title="title" v-model:open="addFormOpen">
     <UButton>
-      <UIcon name="i-lucide-badge-plus" size="1rem" class="cursor-pointer" />
+      <UIcon name="i-lucide-badge-plus" size="1.5rem" class="cursor-pointer" />
     </UButton>
     <template #body>
       <UForm :schema="formSchema" :state="formState" class="space-y-4">

@@ -1,47 +1,83 @@
+const textFormat = {
+    "width": "120%",
+    "text-halign": "center",
+    "text-valign": "center",
+    "color": "#d5a398",
+    "text-outline-width": 1,
+    "text-outline-color": "white",
+    "font-size": "16px",
+    "font-family": "Cooper Black",
+    "font-style": "italic",
+    "font-weight": "bold",
+    "text-wrap": "wrap",
+    "text-max-width": "100%",
+}
+
+const edgeFormat = {
+    "arrow-scale": 1,
+    "control-point-distances": 120,
+    "control-point-weights": 0.1,
+    "text-outline-width": 1,
+    "color": "#fff",
+    "font-size": "8px",
+    "text-rotation": "autorotate"
+}
+
 export const basicStyles = [
+    {
+        selector: 'node[type="season-node"]',
+        style: {
+            "background-color": "#d6bd7b",
+            shape: "barrel",
+            label: "data(label)",
+            ...textFormat
+        },
+    },
+    {
+        selector: 'node[type="episode-node"]',
+        style: {
+            "background-color": "#8ca98d",
+            "height": "75%",
+            shape: "barrel",
+            label: "data(label)",
+            ...textFormat
+        },
+    },
     {
         selector: 'node[type="sketch-node"]',
         style: {
-            "background-color": "#ff007d",
+            "background-color": "#b9a6bc",
             shape: "barrel",
             label: "data(label)",
-            "width": "100%",
-            "text-halign": "center",
-            "text-valign": "center",
-            "color": "#fff",
-            "text-outline-width": 0.5,
-            "text-outline-color": "black",
-            "font-size": "14px",
+            ...textFormat
+
         },
     },
     {
         selector: 'node[type="character-node"]',
         style: {
-            "background-color": "#ef9fc6",
+            "background-color": "#cc7cbb",
             shape: "round-rectangle",
             label: "data(label)",
-            "width": "100%",
-            "text-halign": "center",
-            "text-valign": "center",
-            "color": "#fff",
-            "text-outline-width": 0.5,
-            "text-outline-color": "black",
-            "font-size": "14px",
+            ...textFormat
         },
     },
     {
         selector: 'node[type="actor-node"]',
         style: {
-            "background-color": "#f1d576",
+            "background-color": "#d8707b",
             shape: "ellipse",
             label: "data(label)",
-            "width": "100%",
-            "text-halign": "center",
-            "text-valign": "center",
-            "color": "#fff",
-            "text-outline-width": 0.5,
-            "text-outline-color": "black",
-            "font-size": "14px",
+            ...textFormat
+        },
+    },
+    {
+        selector: 'node[type="writer-node"]',
+        style: {
+            "background-color": "#9eb0cb",
+            shape: "ellipse",
+            label: "data(label)",
+            ...textFormat
         },
     },
     {
@@ -49,66 +85,83 @@ export const basicStyles = [
         style: {
             width: 3,
             "line-color": "#ccc",
-            "target-arrow-shape": "triangle",
+            // "target-arrow-shape": "triangle",
         },
     },
     {
-        selector: "edge[type='actor-character-edge']",
+        selector: "edge[type='character-actor-edge']",
         style: {
-            width: 1,
-            "line-color": "#ee7d7d",
-            "target-arrow-color": "#ee7d7d",
-            "target-arrow-fill": "filled",
-            "target-arrow-shape": "triangle",
-            "arrow-scale": 0.5,
-            "curve-style": "bezier",
-            "control-point-distances": 120,
-            "control-point-weights": 0.1,
+            width: 3,
             label: "plays",
-            "text-outline-width": 0.5,
-            "color": "#fff",
-            "font-size": "8px",
-            "text-rotation": "autorotate"
+            "line-color": "#ee7d7d",
+            "source-arrow-color": "#ee7d7d",
+            "source-arrow-fill": "filled",
+            "source-arrow-shape": "triangle",
+            "curve-style": "round-taxi",
+            ...edgeFormat
 
         },
     },
     {
         selector: "edge[type='character-sketch-edge']",
         style: {
-            width: 1,
-            "line-color": "#7eb6f5",
-            "target-arrow-color": "#7eb6f5",
-            "target-arrow-fill": "filled",
-            "target-arrow-shape": "triangle",
-            "arrow-scale": 0.5,
-            "curve-style": "bezier",
-            "control-point-distances": 120,
-            "control-point-weights": 0.1,
+            width: 3,
             label: "in",
-            "text-outline-width": 0.5,
-            "color": "#fff",
-            "font-size": "8px",
-            "text-rotation": "autorotate"
+            "line-color": "#7eb6f5",
+            "source-arrow-color": "#7eb6f5",
+            "source-arrow-fill": "filled",
+            "source-arrow-shape": "triangle",
+            "curve-style": "round-taxi",
+            ...edgeFormat
 
         },
     },
     {
         selector: "edge[type='character-connection-edge']",
         style: {
-            width: 1,
-            "line-color": "#7eb6f5",
-            "target-arrow-color": "#7eb6f5",
+            width: 3,
+            label: "data(connectionType)",
+            "line-color": "#e85bd4",
+            "target-arrow-color": "#e85bd4",
             "target-arrow-fill": "filled",
             "target-arrow-shape": "triangle",
-            "arrow-scale": 0.5,
-            "curve-style": "bezier",
-            "control-point-distances": 120,
-            "control-point-weights": 0.1,
-            label: "data(connectionType)",
-            "text-outline-width": 0.5,
-            "color": "#fff",
-            "font-size": "8px",
-            "text-rotation": "autorotate"
+            ...edgeFormat
+
+        },
+    },
+    {
+        selector: "edge[type='episode-sketch-edge']",
+        style: {
+            width: 3,
+            label: "data(order)",
+            "line-color": "#3c81d3",
+            "target-arrow-color": "#3c81d3",
+            "target-arrow-fill": "filled",
+            "target-arrow-shape": "triangle",
+            "curve-style": "round-taxi",
+            ...edgeFormat
+
+        },
+    },
+    {
+        selector: "edge[type='writer-episode-edge']",
+        style: {
+            width: 3,
+            label: "wrote",
+            "line-color": "#db7dec",
+            "target-arrow-color": "#db7dec",
+            "curve-style": "round-taxi",
+            ...edgeFormat
+
+        },
+    },{
+        selector: "edge[type='season-episode-edge']",
+        style: {
+            width: 3,
+            label: "",
+            "line-color": "#ff966c",
+            "target-arrow-color": "#ff966c",
+            ...edgeFormat
 
         },
     }

@@ -2,7 +2,7 @@
   <div>
     <h1 class="text-3xl font-bold pb-3"> Visualization</h1>
 
-    <StandardDiagram :nodes="nodes" :edges="edges" @updateCheckbox="onCheckboxUpdate" :checkboxes="checkboxes" :save-data="true"/>
+    <CustomDiagram :nodes="nodes" :edges="edges" @updateCheckbox="onCheckboxUpdate" :checkboxes="checkboxes" :save-data="true"/>
 <!--    <UCard>-->
 <!--      nodes-->
 <!--      {{JSON.stringify(nodes, null, 2)}}-->
@@ -51,8 +51,11 @@ import {
   mapSeasonsNodes,
   mapSketchNodesAndEdges, mapWriterNodesAndEdges
 } from "~/components/networkDiagrams/nodeAndEdgeMappingFunctions.js";
+import {filterBrokenEdges, filterById, positionNodes} from "~/components/networkDiagrams/nodePositioning.js";
+import CustomDiagram from "~/components/networkDiagrams/CustomDiagram.vue";
 
 export default {
+  components: {CustomDiagram},
   data() {
     return {
       ready: false,
@@ -110,19 +113,24 @@ export default {
       const newCharacterElements = mapCharacterNodesAndEdges(this.characters);
       this.pushUnique(newCharacterElements.nodes, newCharacterElements.edges)
 
-      if(this.filters.showWriters){
-        const newWriterElements = mapWriterNodesAndEdges(this.writers);
-        this.pushUnique(newWriterElements.nodes, newWriterElements.edges)
+      // if(this.filters.showWriters){
+      //   const newWriterElements = mapWriterNodesAndEdges(this.writers);
+      //   this.pushUnique(newWriterElements.nodes, newWriterElements.edges)
+      //
+      // }
+      // if(this.filters.showConnections){
+      //   const newConnectionElements = mapCharacterConnectionEdges(this.connections);
+      //   this.pushUnique(newConnectionElements.nodes, newConnectionElements.edges)
+      // }
+      // if(this.filters.showActors){
+      //   const newActorElements = mapActorNodesAndEdges(this.actors, this.characters)
+      //   this.pushUnique(newActorElements.nodes, newActorElements.edges)
+      // }
 
-      }
-      if(this.filters.showConnections){
-        const newConnectionElements = mapCharacterConnectionEdges(this.connections);
-        this.pushUnique(newConnectionElements.nodes, newConnectionElements.edges)
-      }
-      if(this.filters.showActors){
-        const newActorElements = mapActorNodesAndEdges(this.actors, this.characters)
-        this.pushUnique(newActorElements.nodes, newActorElements.edges)
-      }
+      this.nodes = filterById(this.nodes)
+
+      this.edges = filterBrokenEdges(this.nodes, this.edges)
+      this.nodes = positionNodes(this.nodes, this.edges)
 
     },
     pushUnique(newNodes, newEdges){

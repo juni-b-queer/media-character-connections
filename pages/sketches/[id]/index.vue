@@ -1,197 +1,121 @@
-<script setup lang="ts">
-import {ref, onMounted} from 'vue';
-import {useRouter} from 'vue-router';
-import {useRoute} from "#vue-router";
+<script lang="ts">
+import {defineComponent} from 'vue'
+import {characterFormConfig, characterSchema, sketchFormConfig, sketchSchema} from "~/components/schema";
+import EntityForm from "~/components/forms/EntityForm.vue";
 import {characterColumns} from "~/components/columns.vue";
-import {characterSchema} from "~/components/schema";
+import {
+  mapActorNodesAndEdges,
+  mapCharacterConnectionEdges,
+  mapCharacterNodesAndEdges,
+  mapEpisodeNodesAndEdges,
+  mapSeasonsNodes,
+  mapSketchNodesAndEdges, mapWriterNodesAndEdges
+} from "~/components/networkDiagrams/nodeAndEdgeMappingFunctions";
+import CustomDiagram from "~/components/networkDiagrams/CustomDiagram.vue";
+import NotesTable from "~/components/Tables/NotesTable.vue";
 
-const router = useRouter(); // Initialize Vue Router
-
-const route = useRoute();
-const sketchId = route.params.id;
-
-const sketch = ref(null)
-
-const getSketch= async () => {
-  sketch.value = await $fetch(`/api/sketches/${sketchId}`)
-}
-
-const characters = ref([])
-
-const getCharacters = async () => {
-  characters.value = await $fetch(`/api/sketches/${sketchId}/characters`)
-}
-
-const charactersTableRef = ref(null);
-
-async function onCharacterAdded(data, other) {
-
-  const resp = await $fetch(`/api/characters/${data.response.id}/add-to-sketch`,
-      {
-        method: 'POST',
-        body: {
-          sketchId: sketch.value.id
+export default defineComponent({
+  name: "visualized",
+  components: {NotesTable, CustomDiagram, EntityForm},
+  data(){
+    return {
+      sketchId: this.$route.params.id,
+      sketch: null,
+      characters: [],
+      isEditing: false,
+      nodes: [],
+      edges: [],
+      filters: {
+        showConnections: true,
+        showActors: true,
+      },
+      checkboxes: [
+        {
+          key: 'showConnections', default: true, label: "Show Character Connections", value: true
+        },
+        {
+          key: 'showActors', default: true, label: "Show Actors", value: true
         }
-      })
-
-  if (charactersTableRef.value) {
-    await charactersTableRef.value.fetchData();
-  }
-
-}
-
-const nodes = ref([]);
-const edges = ref([]);
-
-function prepareNodesAndEdges() {
-  nodes.value = []
-  edges.value = []
-  mapSketch()
-  mapCharacters()
-  if(filters.value.includeRelationships) {
-    mapRelationships()
-  }
-}
-
-function mapSketch() {
-  if(!sketch.value) return;
-  nodes.value.push({
-    data: {
-      id: `sketch${sketch.value.id}`,
-      label: sketch.value.name,
-      type: 'sketch-node',
+      ]
     }
-  })
-}
-
-function mapCharacters() {
-  if(!characters.value) return;
-  characters.value.forEach(character => {
-    nodes.value.push({
-      data: {
-        id: `character${character.id}`,
-        label: character.name,
-        type: 'character-node',
-      }
-    })
-
-    nodes.value.push({
-      data: {
-        id: `actor${character.actor.id}`,
-        label: character.actor.name,
-        type: 'actor-node',
-      }
-    })
-
-    edges.value.push({
-      data: {
-        id: `actor${character.actor.id}-character${character.id}`,
-        target: `character${character.id}`,
-        source: `actor${character.actor.id}`,
-        type: 'actor-character-edge',
-      }
-    })
-
-    edges.value.push({
-      data: {
-        id: `character${character.id}-sketch${sketch.value.id}`,
-        target: `sketch${sketch.value.id}`,
-        source: `character${character.id}`,
-        type: 'character-sketch-edge',
-      }
-    })
-  })
-}
-
-
-
-function mapRelationships() {
-  if(!characters.value) return;
-  characters.value.forEach(character => {
-    if(character.toConnection?.length > 0){
-      character.toConnection.forEach(connection => {
-        if(!nodes.value.find(n => n.data.id === `character${connection.sourceCharacterId}`)){
-         if(!filters.value.includeOtherCharacters) return
-
-          nodes.value.push({
-            data: {
-              id: `character${connection.sourceCharacterId}`,
-              label: connection.source.name,
-              type: 'character-node',
+  },
+  methods:{
+    editorMounted(data){
+      this.sketch = data.entity;
+      this.mapAll()
+      this.isEditing = false;
+    },
+    async getCharacters(){
+      this.characters = await $fetch(`/api/sketches/${this.sketchId}/characters`)
+    },
+    async onCharacterAdded(data){
+      const resp = await $fetch(`/api/characters/${data.response.id}/add-to-sketch`,
+          {
+            method: 'POST',
+            body: {
+              sketchId: this.sketch.id
             }
           })
-        }
 
-        edges.value.push({
-          data: {
-            id: `character${connection.sourceCharacterId}-character${character.id}`,
-            target: `character${character.id}`,
-            source: `character${connection.sourceCharacterId}`,
-            type: 'character-connection-edge',
-            connectionType: connection.connectionType,
-          }
-        })
-      })
+      await this.getCharacters()
+    },
+    pushUnique(newNodes, newEdges){
+      this.nodes = this.nodes.concat(newNodes)
+      this.edges = this.edges.concat(newEdges)
+    },
+    onCheckboxUpdate(key) {
+      this.filters[key] = !this.filters[key];
+      this.mapAll()
+    },
+    mapAll(){
+      this.nodes = []
+      this.edges = []
+      const newSketchElements = mapSketchNodesAndEdges([this.sketch]);
+      this.pushUnique(newSketchElements.nodes, newSketchElements.edges)
+      const newCharacterElements = mapCharacterNodesAndEdges(this.characters, this.sketch);
+      this.pushUnique(newCharacterElements.nodes, newCharacterElements.edges)
+      if(this.filters.showConnections){
+        const newConnectionElements = mapCharacterConnectionEdges(this.characters.map(c => [...c.toConnection]).flat());
+        this.pushUnique(newConnectionElements.nodes, newConnectionElements.edges)
+      }
+      if(this.filters.showActors){
+        const newActorElements = mapActorNodesAndEdges(this.characters.map(c => [c.actor]).flat().filter(a => a !== null), this.characters)
+        this.pushUnique(newActorElements.nodes, newActorElements.edges)
+      }
+    },
+  },
+  computed: {
+    sketchFormConfig() {
+      return sketchFormConfig
+    },
+    sketchSchema() {
+      return sketchSchema
+    },
+    characterFormConfig() {
+      return characterFormConfig
+    },
+    characterSchema() {
+      return characterSchema
+    },
+    characterColumns() {
+      return characterColumns
     }
-
-    if(character.fromConnection?.length > 0){
-      character.fromConnection.forEach(connection => {
-        if(!nodes.value.find(n => n.data.id === `character${connection.targetCharacterId}`)){
-          if(!filters.value.includeOtherCharacters) return
-
-          nodes.value.push({
-            data: {
-              id: `character${connection.targetCharacterId}`,
-              label: connection.target.name,
-              type: 'character-node',
-            }
-          })
-        }
-        edges.value.push({
-          data: {
-            id: `character${character.id}-character${connection.targetCharacterId}`,
-            target: `character${connection.targetCharacterId}`,
-            source: `character${character.id}`,
-            type: 'character-connection-edge',
-            connectionType: connection.connectionType
-          }
-        })
-      })
-    }
-  })
-}
-
-onMounted(async () => {
-  await getSketch()
-  await getCharacters()
-  prepareNodesAndEdges()
-})
-
-const filters = ref({
-  includeRelationships: true,
-  includeOtherCharacters: true,
-})
-const checkboxes = ref([
-  { key: 'includeRelationships', default: true, label: 'Include Relationships', value: filters.value.includeRelationships },
-  { key: 'includeOtherCharacters', default: true, label: 'Include Other Characters', value: filters.value.includeOtherCharacters },
-]);
-
-
-function onCheckboxUpdate(key) {
-  filters.value[key] = !filters.value[key];
-  const checkbox = checkboxes.value.find(cb => cb.key === key);
-  if (checkbox) {
-    checkbox.value = filters.value[key];
+  },
+  async mounted(){
+    await this.getCharacters()
   }
-  prepareNodesAndEdges()
-}
-
+})
 </script>
 
 <template>
-
   <div>
-    <h1 class="text-2xl font-bold" v-if="sketch">  {{sketch.name}}</h1>
+  <div class="table-header flex items-center justify-between">
+    <h1 class="text-xl font-bold"> {{sketch?.name}} </h1>
+
+    <UButton v-if="!isEditing" @click="isEditing = true">Edit Sketch</UButton>
+  </div>
+  <EntityForm v-show="isEditing" title="Edit Sketch" :entity-id="parseInt(sketchId)" :validation-schema="sketchSchema" api-url="/api/sketches" :form-config="sketchFormConfig" @submitted="editorMounted" @mounted="editorMounted"/>
+
     <div class="table-header flex items-center justify-between">
       <h1 class="text-xl"> Characters </h1>
 
@@ -199,18 +123,27 @@ function onCheckboxUpdate(key) {
           title="Add Character"
           post-url="/api/characters"
           :schema="characterSchema"
-          :default-state="{ name: '', avatarUrl: '', actorId: 0 }"
+          :default-state="{ name: '', avatarUrl: '', actorId: 0, creditedName: '' }"
           :additional-fields-api="{ actorId: '/api/actors' }"
           @submitted="onCharacterAdded"
       />
 
     </div>
+    <UCard>
+
     <DisplayTable
         :columns="characterColumns"
         rowPath="/characters"
         :row-data="characters"
         ref="charactersTableRef"
     />
-    <StandardDiagram :nodes="nodes" :edges="edges" @updateCheckbox="onCheckboxUpdate" :checkboxes="checkboxes"/>
+    </UCard>
+    <NotesTable :notable-id="parseInt(sketchId)" :notable-type="'sketch'" />
+    <CustomDiagram :nodes="nodes" :edges="edges" @updateCheckbox="onCheckboxUpdate" :checkboxes="checkboxes"/>
+
   </div>
 </template>
+
+<style scoped>
+
+</style>

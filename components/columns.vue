@@ -1,4 +1,14 @@
-<script >
+<script>
+export const seasonsColumns = [
+  {
+    accessorKey: 'id',
+    header: 'Season #',
+  },
+  {
+    accessorKey: 'releaseYear',
+    header: 'Release Year',
+  }
+]
 
 export const sketchesColumns = [
   {
@@ -7,9 +17,9 @@ export const sketchesColumns = [
     cell: (row) =>  row.getValue('name'),
   },
   {
-    accessorKey: 'sketchNumberInEpisode',
-    header: 'Sketch Number In Episode',
-    cell: (row) => row.getValue('sketchNumberInEpisode'),
+    accessorKey: 'location',
+    header: 'Sketch Location',
+    cell: (row) => row.getValue('location'),
   },
   {
     accessorKey: 'runtime',
@@ -55,7 +65,7 @@ export const characterColumns = [
   {
     accessorKey: 'actor',
     header: 'Actor',
-    cell: (row) => row.getValue('actor').name,
+    cell: (row) => row.getValue('actor')?.name ?? '',
   },
   {
     accessorKey: 'avatarUrl',
@@ -70,6 +80,8 @@ export const characterColumns = [
     },
   },
 ]
+
+
 
 export const characterConnectionColumns = [
 
@@ -98,5 +110,4 @@ export const characterConnectionColumns = [
     },
   },
 ]
-
 </script>

@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 const data = ref(props.rowData);
-const columns = ref(props.columns);
+const columns = ref([...props.columns]);
 const loading = ref(true);
 const error = ref(null);
 
@@ -67,6 +67,9 @@ watch(
     () => updateData(),
     { deep: true }
 );
+
+// https://ui.nuxt.com/components/table#with-row-actions
+// TODO add prop for actions?
 
 
 

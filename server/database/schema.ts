@@ -1,9 +1,8 @@
 import {
-    boolean,
     integer,
     pgTable,
     varchar,
-    serial, primaryKey
+    serial, primaryKey, text, date, json
 } from 'drizzle-orm/pg-core' // Use pg-core instead of mysql-core
 import { relations } from 'drizzle-orm'
 
@@ -26,8 +25,10 @@ export const sketch = pgTable('sketches_table', {
     id: serial('id').primaryKey(),
     name: varchar({ length: 255 }).notNull(),
     episodeId: integer().notNull().references(() => episode.id),
-    sketchNumberInEpisode: integer().notNull(),
-    runtime: integer().notNull()
+    sketchNumberInEpisode: integer(),
+    runtime: integer(),
+    location: text(),
+
 })
 
 export const writer = pgTable('writers_table', {
@@ -44,8 +45,9 @@ export const actor = pgTable('actors_table', {
 
 export const character = pgTable('characters_table', {
     id: serial('id').primaryKey(),
-    name: varchar({ length: 255 }).notNull().unique(),
-    actorId: integer().notNull().references(() => actor.id),
+    name: varchar({ length: 255 }).notNull(),
+    creditedName: varchar({ length: 255 }),
+    actorId: integer().references(() => actor.id),
     avatarUrl: varchar({ length: 255 }),
 })
 
@@ -55,6 +57,19 @@ export const characterConnection = pgTable('character_connections_table', {
     targetCharacterId: integer().notNull().references(() => character.id),
     sourceCharacterId: integer().notNull().references(() => character.id),
     sketchId: integer().notNull().references(() => sketch.id),
+})
+
+export const note = pgTable('notes_table', {
+    id: serial('id').primaryKey(),
+    notableType: varchar({ length: 255 }).notNull(),
+    notableId: integer().notNull(),
+    note: text(),
+})
+
+export const visualizerView = pgTable('visualizer_views_table', {
+    id: serial('id').primaryKey(),
+    timestamp: date().notNull(),
+    viewData: json().notNull(),
 })
 
 
@@ -69,6 +84,7 @@ export const writerToEpisode = pgTable('writers_to_episodes_table', {
 export const characterToSketch = pgTable('characters_to_sketches_table', {
     characterId: integer().notNull().references(() => character.id),
     sketchId: integer().notNull().references(() => sketch.id),
+    note: text(),
 }, (t) => [
     primaryKey({ columns: [t.characterId, t.sketchId] })
 ])

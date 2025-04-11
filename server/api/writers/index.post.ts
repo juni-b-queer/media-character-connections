@@ -6,7 +6,6 @@ export default eventHandler(async (event) => {
     const existing = await useDrizzle().query.writer.findFirst({
         where: eq(tables.writer.name, name)
     })
-    console.log(existing)
     if (existing) return existing
 
     const writer = await useDrizzle().insert(tables.writer).values({
